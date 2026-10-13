@@ -61,6 +61,6 @@ TrabalhoFinal/
 
 ## 👥 Integrantes da Equipe
 
-*  [João Victor Ferreira Pimenta]
-*  [Gustavo Henrique de Oliveira Rodriguez Silva]
-*  [Luigi Ribeiro de Moraes]
+*  João Victor Ferreira Pimenta
+*  Gustavo Henrique de Oliveira Rodrigues Silva
+*  Luigi Ribeiro de Moraes
