@@ -61,4 +61,6 @@ TrabalhoFinal/
 
 ## 👥 Integrantes da Equipe
 
-* **Aluno(a):** [Seu Nome Completo]
+*  [João Victor Ferreira Pimenta]
+*  [Gustavo Henrique de Oliveira Rodriguez Silva]
+*  [Luigi Ribeiro de Moraes]
