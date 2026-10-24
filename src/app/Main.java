@@ -6,8 +6,6 @@ public class Main {
 		System.out.println("ta rodando");
 		System.out.println("testando dnv");
 		
-		// arrumar a maneira como o usuário tem que inserir o cpf
-		// ajustar maneira como podem ser escritas os tamanhos das peças
 
 	}
 
