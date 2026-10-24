@@ -57,6 +57,20 @@ TrabalhoFinal/
     ├── relatorios/   # Arquivos compilados do JasperReports (.jrxml / .jasper)
     └── view/         # Interfaces gráficas desenvolvidas em FXML
 ```
+
+---
+
+## 🗄️ Configuração do Banco de Dados
+
+O sistema utiliza o banco de dados MySQL. Siga os passos abaixo para configurar a base de dados:
+
+1. Certifique-se de ter o MySQL Server instalado e rodando em sua máquina.
+2. Abra o **MySQL Workbench** (ou sua ferramenta de preferência).
+3. Execute o script SQL fornecido na raiz do projeto (`script.sql`), que criará automaticamente o banco `db_sgu` e as tabelas necessárias:
+   ```sql
+   -- O script contém os comandos para criação do banco e das tabelas:
+   -- funcionario, uniforme e registro_producao.
+
 ---
 
 ## 👥 Integrantes da Equipe
