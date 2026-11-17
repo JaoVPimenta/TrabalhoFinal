@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <children>
       <Label layoutX="35.0" layoutY="24.0" prefHeight="69.0" prefWidth="530.0" text="Bem-Vindo ao Sistema de Gestão de Uniformes">
          <font>
@@ -20,19 +20,19 @@
         <menus>
           <Menu mnemonicParsing="false" text="Cadastros">
             <items>
-              <MenuItem mnemonicParsing="false" text="Funcionários" />
-                  <MenuItem mnemonicParsing="false" text="Uniformes" />
+              <MenuItem mnemonicParsing="false" onAction="#abrirFuncionarios" text="Funcionários" />
+              <MenuItem mnemonicParsing="false" onAction="#abrirUniformes" text="Uniformes" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Produção">
             <items>
-              <MenuItem mnemonicParsing="false" text="Registrar Produção" />
+              <MenuItem mnemonicParsing="false" onAction="#abrirProducao" text="Registrar Produção" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Relatórios">
             <items>
-              <MenuItem mnemonicParsing="false" text="Produtividade" />
-                  <MenuItem mnemonicParsing="false" text="Catálogo" />
+              <MenuItem mnemonicParsing="false" onAction="#abrirProdutividade" text="Produtividade" />
+              <MenuItem mnemonicParsing="false" onAction="#abrirCatalogo" text="Catálogo" />
             </items>
           </Menu>
         </menus>
