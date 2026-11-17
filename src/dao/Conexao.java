@@ -16,13 +16,4 @@ public class Conexao {
 		return DriverManager.getConnection(URL, USUARIO, SENHA);
 	}
 	
-	//Método main para testas a conexão
-	public static void main(String[] args) {
-		try (Connection conexao = getConnection()) {
-		System.out.println("Conexão aberta com sucesso");
-		} catch (SQLException e) {
-			System.out.println("Erro ao conectar ao banco: " + e.getMessage());
-		}
-	}
-	
 }
