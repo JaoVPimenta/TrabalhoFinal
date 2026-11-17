@@ -22,6 +22,26 @@ public class Uniforme {
 		this.precoBase = precoBase;
 	}
 	
+	public static double calcularPrecoSugerido(String material, String tamanho) {
+        double preco = 20.0; // Preço base padrão
+
+        // Regra por material
+        if (material != null) {
+            if (material.equalsIgnoreCase("Algodão")) {
+                preco = 35.0;
+            } else if (material.equalsIgnoreCase("Poliéster")) {
+                preco = 25.0;
+            }
+        }
+
+        // Adicional opcional por tamanho (exemplo)
+        if (tamanho != null && (tamanho.equalsIgnoreCase("GG") || tamanho.equalsIgnoreCase("XG"))) {
+            preco += 5.0;
+        }
+
+        return preco;
+    }
+	
 	public int getId() {
 		return id;
 	}
