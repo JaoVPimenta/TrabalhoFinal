@@ -6,9 +6,27 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO (Data Access Object) responsável pelas operações de persistência da
+ * entidade {@link Funcionario}, na tabela {@code funcionario}.
+ * <p>
+ * Utiliza consultas parametrizadas ({@link PreparedStatement}) e
+ * try-with-resources. Erros de SQL são tratados internamente e exibidos em
+ * {@code System.err}, sem serem propagados ao chamador.
+ * </p>
+ */
 public class FuncionarioDAO {
 
     // Método para Inserir (Create)
+
+    /**
+     * Insere um novo funcionário no banco de dados.
+     * <p>
+     * O {@code id} é gerado pelo banco e, portanto, não é utilizado.
+     * </p>
+     *
+     * @param f funcionário a ser cadastrado (nome, CPF, cargo e data de admissão)
+     */
     public void inserir(Funcionario f) {
         String sql = "INSERT INTO funcionario (nome, cpf, cargo, data_admissao) VALUES (?, ?, ?, ?)";
         
@@ -29,6 +47,13 @@ public class FuncionarioDAO {
     }
 
     // Método para Listar todos (Read)
+
+    /**
+     * Lista todos os funcionários cadastrados.
+     *
+     * @return lista com todos os funcionários; lista vazia caso não haja
+     *         registros ou ocorra algum erro de acesso ao banco
+     */
     public List<Funcionario> listar() {
         String sql = "SELECT * FROM funcionario";
         List<Funcionario> lista = new ArrayList<>();
@@ -56,6 +81,13 @@ public class FuncionarioDAO {
     }
 
     // Método para Atualizar (Update)
+
+    /**
+     * Atualiza nome, CPF, cargo e data de admissão de um funcionário existente.
+     *
+     * @param f funcionário com os dados atualizados; o {@code id} identifica
+     *          qual registro será alterado
+     */
     public void atualizar(Funcionario f) {
         String sql = "UPDATE funcionario SET nome = ?, cpf = ?, cargo = ?, data_admissao = ? WHERE id = ?";
         
@@ -77,6 +109,16 @@ public class FuncionarioDAO {
     }
 
     // Método para Excluir (Delete)
+
+    /**
+     * Exclui um funcionário pelo seu identificador.
+     * <p>
+     * A exclusão falha (apenas registrada em {@code System.err}) caso existam
+     * registros de produção vinculados ao funcionário, devido à chave estrangeira.
+     * </p>
+     *
+     * @param id identificador do funcionário a ser excluído
+     */
     public void excluir(int id) {
         String sql = "DELETE FROM funcionario WHERE id = ?";
         

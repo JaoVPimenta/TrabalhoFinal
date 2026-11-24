@@ -8,9 +8,30 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO (Data Access Object) responsável pelas operações de persistência da
+ * entidade {@link RegistroProducao}, na tabela {@code registro_producao}.
+ * <p>
+ * Não há operação de atualização: um lançamento incorreto deve ser excluído
+ * e registrado novamente. Erros de SQL são tratados internamente e exibidos em
+ * {@code System.err}, sem serem propagados ao chamador.
+ * </p>
+ */
 public class RegistroProducaoDAO {
 
     // Inserir Registro de Produção (Create)
+
+    /**
+     * Insere um novo registro de produção no banco de dados.
+     * <p>
+     * São gravados os identificadores do funcionário e do uniforme associados,
+     * além da quantidade e da data de produção. O {@code id} do registro é
+     * gerado pelo banco.
+     * </p>
+     *
+     * @param rp registro de produção a ser inserido; o funcionário e o uniforme
+     *           devem estar previamente cadastrados (possuir {@code id} válido)
+     */
     public void inserir(RegistroProducao rp) {
         String sql = "INSERT INTO registro_producao (id_funcionario, id_uniforme, quantidade, data_producao) VALUES (?, ?, ?, ?)";
         
@@ -31,6 +52,19 @@ public class RegistroProducaoDAO {
     }
 
     // Listar Registros com JOIN para resgatar dados do Funcionário e Uniforme (Read)
+
+    /**
+     * Lista todos os registros de produção, já com os dados completos do
+     * funcionário e do uniforme associados.
+     * <p>
+     * A consulta utiliza {@code JOIN} com as tabelas {@code funcionario} e
+     * {@code uniforme}, com aliases (ex.: {@code f_nome}, {@code u_peca}) para
+     * evitar conflito entre colunas de mesmo nome.
+     * </p>
+     *
+     * @return lista de registros de produção; lista vazia caso não haja
+     *         registros ou ocorra algum erro de acesso ao banco
+     */
     public List<RegistroProducao> listar() {
         String sql = "SELECT rp.id AS rp_id, rp.quantidade, rp.data_producao, " +
                      "f.id AS f_id, f.nome AS f_nome, f.cpf AS f_cpf, f.cargo AS f_cargo, f.data_admissao AS f_admissao, " +
@@ -82,6 +116,12 @@ public class RegistroProducaoDAO {
     }
 
     // Excluir Registro de Produção (Delete)
+
+    /**
+     * Exclui um registro de produção pelo seu identificador.
+     *
+     * @param id identificador do registro de produção a ser excluído
+     */
     public void excluir(int id) {
         String sql = "DELETE FROM registro_producao WHERE id = ?";
         

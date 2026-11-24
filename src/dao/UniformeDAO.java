@@ -6,9 +6,27 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO (Data Access Object) responsável pelas operações de persistência da
+ * entidade {@link Uniforme}, na tabela {@code uniforme}.
+ * <p>
+ * Utiliza consultas parametrizadas ({@link PreparedStatement}) e
+ * try-with-resources. Erros de SQL são tratados internamente e exibidos em
+ * {@code System.err}, sem serem propagados ao chamador.
+ * </p>
+ */
 public class UniformeDAO {
 
     // Inserir Uniforme (Create)
+
+    /**
+     * Insere um novo uniforme no banco de dados.
+     * <p>
+     * O {@code id} é gerado pelo banco e, portanto, não é utilizado.
+     * </p>
+     *
+     * @param u uniforme a ser cadastrado (peça, tamanho, cor, material e preço base)
+     */
     public void inserir(Uniforme u) {
         String sql = "INSERT INTO uniforme (peca, tamanho, cor, material, preco_base) VALUES (?, ?, ?, ?, ?)";
         
@@ -30,6 +48,13 @@ public class UniformeDAO {
     }
 
     // Listar Uniformes (Read)
+
+    /**
+     * Lista todos os uniformes cadastrados.
+     *
+     * @return lista com todos os uniformes; lista vazia caso não haja
+     *         registros ou ocorra algum erro de acesso ao banco
+     */
     public List<Uniforme> listar() {
         String sql = "SELECT * FROM uniforme";
         List<Uniforme> lista = new ArrayList<>();
@@ -58,6 +83,13 @@ public class UniformeDAO {
     }
 
     // Atualizar Uniforme (Update)
+
+    /**
+     * Atualiza peça, tamanho, cor, material e preço base de um uniforme existente.
+     *
+     * @param u uniforme com os dados atualizados; o {@code id} identifica
+     *          qual registro será alterado
+     */
     public void atualizar(Uniforme u) {
         String sql = "UPDATE uniforme SET peca = ?, tamanho = ?, cor = ?, material = ?, preco_base = ? WHERE id = ?";
         
@@ -80,6 +112,16 @@ public class UniformeDAO {
     }
 
     // Excluir Uniforme (Delete)
+
+    /**
+     * Exclui um uniforme pelo seu identificador.
+     * <p>
+     * A exclusão falha (apenas registrada em {@code System.err}) caso existam
+     * registros de produção vinculados ao uniforme, devido à chave estrangeira.
+     * </p>
+     *
+     * @param id identificador do uniforme a ser excluído
+     */
     public void excluir(int id) {
         String sql = "DELETE FROM uniforme WHERE id = ?";
         
