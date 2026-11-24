@@ -6,12 +6,12 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+<!-- O CSS é ligado aqui, uma única vez: todas as telas carregadas no centro herdam o estilo. -->
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="1020.0" stylesheets="@../css/estilo.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -36,22 +36,20 @@
       </MenuBar>
    </top>
    <center>
-      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <StackPane styleClass="tela" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane prefHeight="400.0" prefWidth="1000.0">
+            <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="560.0" spacing="10.0" styleClass="card, boas-vindas">
                <children>
-                  <Label layoutX="240.0" layoutY="24.0" prefHeight="69.0" prefWidth="545.0" text="Bem-Vindo ao Sistema de Gestão de Uniformes">
-                     <font>
-                        <Font size="25.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="268.0" fitWidth="333.0" layoutX="344.0" layoutY="103.0" pickOnBounds="true" preserveRatio="true">
+                  <Label styleClass="titulo-boas-vindas" text="Bem-vindo ao SGU" />
+                  <Label styleClass="subtitulo" text="Sistema de Gestão de Uniformes" />
+                  <Label styleClass="subtitulo" text="Escolha uma opção no menu acima para começar." />
+                  <ImageView fitHeight="200.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../imgs/icone_uniforme.png" />
                      </image>
                   </ImageView>
                </children>
-            </AnchorPane>
+            </VBox>
          </children>
       </StackPane>
    </center>
