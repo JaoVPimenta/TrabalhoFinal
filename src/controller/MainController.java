@@ -1,42 +1,34 @@
 package controller;
 
 import java.io.IOException;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
+import javafx.scene.layout.BorderPane;
 
 public class MainController {
 
-
     private static final String PASTA_VIEWS = "/view/";
 
-
+    @FXML
+    private BorderPane mainPane;
 
     @FXML
     private void abrirFuncionarios() {
-        abrirTela("FuncionarioView.fxml", "Cadastro de Funcionários");
+        carregarTela("FuncionarioView.fxml");
     }
 
     @FXML
     private void abrirUniformes() {
-        abrirTela("UniformeView.fxml", "Cadastro de Uniformes");
+        carregarTela("UniformeView.fxml");
     }
-
-
 
     @FXML
     private void abrirProducao() {
-        abrirTela("ProducaoView.fxml", "Registro de Produção");
+        carregarTela("ProducaoView.fxml");
     }
-
-
 
     @FXML
     private void abrirProdutividade() {
@@ -48,20 +40,14 @@ public class MainController {
         mostrarEmDesenvolvimento("Catálogo de Uniformes");
     }
 
-
-    private void abrirTela(String arquivoFxml, String titulo) {
+    private void carregarTela(String arquivoFxml) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(PASTA_VIEWS + arquivoFxml));
             Parent raiz = loader.load();
 
-            Stage janela = new Stage();
-            janela.setTitle(titulo);
-            janela.setScene(new Scene(raiz));
-            janela.setResizable(false);
-            janela.initModality(Modality.APPLICATION_MODAL);
-            janela.showAndWait();
+            mainPane.setCenter(raiz);
 
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
             Alert alerta = new Alert(AlertType.ERROR);
             alerta.setTitle("Erro");

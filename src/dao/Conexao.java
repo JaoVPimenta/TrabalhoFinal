@@ -9,7 +9,7 @@ public class Conexao {
 	//Dados de conexão
 	private static final String URL = "jdbc:mysql://localhost:3306/db_sgu?useSSL=false&serverTimezone=UTC";
 	private static final String USUARIO = "root";
-	private static final String SENHA = "40028922";
+	private static final String SENHA = "aluno123";
 	
 	//Método para obter a conexão
 	public static Connection getConnection() throws SQLException {
