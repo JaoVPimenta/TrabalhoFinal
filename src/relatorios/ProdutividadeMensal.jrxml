@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ProdutividadeMensal" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7dae4030-6f06-4939-960b-4f786694a4fb">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Adaptador db_sgu"/>
+	<style name="ZebraRow" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<bottomPen lineWidth="0.5" lineColor="#E2E8F0"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F8FAFC"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="MES" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[11]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ANO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2026]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+			f.id AS id_funcionario,
+			f.nome AS nome_funcionario,
+			f.cargo,
+			COUNT(rp.id) AS total_lancamentos,
+			COALESCE(SUM(rp.quantidade), 0) AS total_produzido
+		FROM funcionario f
+		LEFT JOIN registro_producao rp
+			ON rp.id_funcionario = f.id
+		   AND MONTH(rp.data_producao) = $P{MES}
+		   AND YEAR(rp.data_producao) = $P{ANO}
+		GROUP BY f.id, f.nome, f.cargo
+		ORDER BY f.nome ASC]]>
+	</queryString>
+	<field name="id_funcionario" class="java.lang.Integer"/>
+	<field name="nome_funcionario" class="java.lang.String"/>
+	<field name="cargo" class="java.lang.String"/>
+	<field name="total_lancamentos" class="java.lang.Long"/>
+	<field name="total_produzido" class="java.math.BigDecimal"/>
+	<variable name="TOTAL_GERAL_PRODUZIDO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_produzido}]]></variableExpression>
+		<initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="64" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="54" backcolor="#1E3A5F" uuid="45f1d372-4f76-4ae3-bf83-f365f551dab2"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="14" y="8" width="527" height="24" forecolor="#FFFFFF" uuid="247f576e-302e-4011-80d6-753bbd3644c1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Produtividade Mensal por Funcionário - SGU]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="14" y="31" width="527" height="16" forecolor="#CBD5E1" uuid="d511701f-686f-467c-bf64-a83ad1da70bf"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Período de referência: " + String.format("%02d/%d", $P{MES}, $P{ANO})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="26" backcolor="#E2E8F0" uuid="a173ebeb-526c-438b-9b73-3f655e5fe0db"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="6" y="0" width="44" height="26" forecolor="#0F172A" uuid="10405490-9823-44e1-84aa-850b313756ab"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="0" width="186" height="26" forecolor="#0F172A" uuid="b9652c4d-e116-4cbe-950d-8ee4ec60c185"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Funcionário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="244" y="0" width="130" height="26" forecolor="#0F172A" uuid="8e51dfde-2a46-4b26-b276-5497e9f2d122"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cargo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="378" y="0" width="85" height="26" forecolor="#0F172A" uuid="eec6864d-47ab-4028-bb7c-87a5eb8e581a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lançamentos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="467" y="0" width="82" height="26" forecolor="#0F172A" uuid="e1d8258b-0062-457c-8221-3dda6cce7b5d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Produzido]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<frame>
+				<reportElement style="ZebraRow" x="0" y="0" width="555" height="24" uuid="54c04ea4-6098-4267-a529-b5f67ced17d7"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="6" y="0" width="44" height="24" forecolor="#334155" uuid="549e4e5a-24eb-468f-ab78-d7d2f1802bca"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{id_funcionario}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="54" y="0" width="186" height="24" forecolor="#0F172A" uuid="d2049f5a-3a65-49c3-a2e3-7972ccbfc98b"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nome_funcionario}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="244" y="0" width="130" height="24" forecolor="#0F172A" uuid="3ee24be7-856a-457d-8d1f-de4a30f66ad4"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cargo}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="378" y="0" width="85" height="24" forecolor="#0F172A" uuid="0d36c3e0-9540-4c2d-aeb6-39d1eed523c6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{total_lancamentos}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="467" y="0" width="82" height="24" forecolor="#0F172A" uuid="cf14e34e-f269-4030-bf56-b02b8c90c6a1"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{total_produzido}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="24" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="2" width="555" height="1" forecolor="#CBD5E1" uuid="1177f098-ef72-4138-abe2-9d5c68cdc986"/>
+			</line>
+			<textField>
+				<reportElement x="0" y="5" width="380" height="16" forecolor="#64748B" uuid="5b67429b-1a65-4186-88bb-e7c61bcf85a9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Funcionários listados: " + $V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="385" y="5" width="170" height="16" forecolor="#64748B" uuid="b8229811-4537-472e-9245-626edcc9b714"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="32" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="4" width="555" height="24" backcolor="#F1F5F9" uuid="c7d0348d-3be4-4d5e-a4a3-fe9cd2deda91"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#CBD5E1"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="14" y="4" width="350" height="24" forecolor="#0F172A" uuid="d8750b73-d30c-4047-ab7b-ca72ef865298"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL GERAL PRODUZIDO NO PERÍODO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="370" y="4" width="179" height="24" forecolor="#1E3A5F" uuid="ba55355b-8d5a-4f93-bd7f-dca58dffe3ee"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_GERAL_PRODUZIDO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

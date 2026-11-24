@@ -1,68 +1,120 @@
 package controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
+import javafx.scene.control.ButtonBar;
+import service.RelatorioService;
 
-/**
- * Controlador da janela principal ({@code MainView.fxml}).
- * <p>
- * Gerencia a navegação do sistema: cada opção do menu carrega uma tela
- * (arquivo FXML) na região central do {@link BorderPane} principal.
- * </p>
- */
 public class MainController {
 
-    /** Pasta (no classpath) onde ficam os arquivos FXML das telas. */
     private static final String PASTA_VIEWS = "/view/";
 
-    /** Painel principal; sua região central exibe a tela ativa. */
     @FXML
     private BorderPane mainPane;
 
-    /** Abre a tela de cadastro de funcionários. */
+    private final RelatorioService relatorioService = new RelatorioService();
+
     @FXML
     private void abrirFuncionarios() {
         carregarTela("FuncionarioView.fxml");
     }
 
-    /** Abre a tela de cadastro de uniformes. */
     @FXML
     private void abrirUniformes() {
         carregarTela("UniformeView.fxml");
     }
 
-    /** Abre a tela de registro de produção. */
     @FXML
     private void abrirProducao() {
         carregarTela("ProducaoView.fxml");
     }
 
-    /** Exibe aviso de que o Relatório de Produtividade ainda não foi implementado. */
     @FXML
     private void abrirProdutividade() {
-        mostrarEmDesenvolvimento("Relatório de Produtividade");
+        Optional<Pair<Integer, Integer>> periodo = solicitarMesAno();
+        if (periodo.isEmpty()) {
+            return;
+        }
+
+        int mes = periodo.get().getKey();
+        int ano = periodo.get().getValue();
+
+        try {
+            relatorioService.gerarProdutividadeMensal(mes, ano);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarErro("Erro ao abrir o Relatório de Produtividade", e.getMessage());
+        }
     }
 
-    /** Exibe aviso de que o Catálogo de Uniformes ainda não foi implementado. */
     @FXML
     private void abrirCatalogo() {
-        mostrarEmDesenvolvimento("Catálogo de Uniformes");
+        try {
+            relatorioService.gerarCatalogoUniformes();
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarErro("Erro ao abrir o Catálogo de Uniformes", e.getMessage());
+        }
     }
 
-    /**
-     * Carrega um arquivo FXML da pasta de views e o exibe no centro do painel principal.
-     * <p>
-     * Caso o arquivo não seja encontrado ou não possa ser carregado
-     * ({@link IOException} ou {@link NullPointerException}), exibe um alerta de erro.
-     * </p>
-     *
-     * @param arquivoFxml nome do arquivo FXML (ex.: {@code "FuncionarioView.fxml"})
-     */
+    private Optional<Pair<Integer, Integer>> solicitarMesAno() {
+        Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
+        dialog.setTitle("Produtividade Mensal");
+        dialog.setHeaderText("Informe o mês e o ano de referência");
+
+        ButtonType btnGerar = new ButtonType("Gerar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGerar, ButtonType.CANCEL);
+
+        ComboBox<Integer> cbMes = new ComboBox<>(FXCollections.observableArrayList(
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
+        cbMes.setValue(LocalDate.now().getMonthValue());
+
+        TextField txtAno = new TextField(String.valueOf(LocalDate.now().getYear()));
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(new Label("Mês (1-12):"), 0, 0);
+        grid.add(cbMes, 1, 0);
+        grid.add(new Label("Ano:"), 0, 1);
+        grid.add(txtAno, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(botao -> {
+            if (botao == btnGerar) {
+                Integer mes = cbMes.getValue();
+                try {
+                    int ano = Integer.parseInt(txtAno.getText().trim());
+                    if (mes != null && ano >= 1900 && ano <= 2100) {
+                        return new Pair<>(mes, ano);
+                    }
+                } catch (NumberFormatException ignored) {
+                }
+                mostrarErro("Valor inválido", "Informe um mês válido e um ano numérico válido.");
+            }
+            return null;
+        });
+
+        return dialog.showAndWait();
+    }
+
     private void carregarTela(String arquivoFxml) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(PASTA_VIEWS + arquivoFxml));
@@ -72,25 +124,16 @@ public class MainController {
 
         } catch (IOException | NullPointerException e) {
             e.printStackTrace();
-            Alert alerta = new Alert(AlertType.ERROR);
-            alerta.setTitle("Erro");
-            alerta.setHeaderText(null);
-            alerta.setContentText("Não foi possível abrir a tela " + arquivoFxml
+            mostrarErro("Erro", "Não foi possível abrir a tela " + arquivoFxml
                     + ".\nVerifique o caminho da pasta de views no MainController.\n\n" + e.getMessage());
-            alerta.showAndWait();
         }
     }
 
-    /**
-     * Exibe um alerta informando que um recurso ainda não foi implementado.
-     *
-     * @param nomeRelatorio nome do recurso a ser citado na mensagem
-     */
-    private void mostrarEmDesenvolvimento(String nomeRelatorio) {
-        Alert alerta = new Alert(AlertType.INFORMATION);
-        alerta.setTitle("Em desenvolvimento");
+    private void mostrarErro(String titulo, String mensagem) {
+        Alert alerta = new Alert(AlertType.ERROR);
+        alerta.setTitle(titulo);
         alerta.setHeaderText(null);
-        alerta.setContentText(nomeRelatorio + " ainda não foi implementado.");
+        alerta.setContentText(mensagem);
         alerta.showAndWait();
     }
 }
