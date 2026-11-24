@@ -17,92 +17,70 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import model.Material;
+import model.Peca;
+import model.Tamanho;
 import model.Uniforme;
 
-
 /**
- * Controlador da tela de cadastro de uniformes ({@code UniformeView.fxml}).
+ * Controller da tela de uniformes ({@code UniformeView.fxml}).
  * <p>
- * Permite incluir, alterar e excluir uniformes, exibindo-os em uma tabela. Ao
- * escolher material e tamanho, o preço é sugerido automaticamente (veja
- * {@link Uniforme#calcularPrecoSugerido(String, String)}), podendo ser editado
- * pelo usuário.
+ * Implementa o CRUD de {@link Uniforme} usando o {@link UniformeDAO}.
+ * Responsabilidades:
+ * </p>
+ * <ul>
+ *   <li>popular os ComboBoxes de peça, tamanho, cor e material;</li>
+ *   <li>sugerir o preço automaticamente com a regra de negócio de
+ *       {@link Uniforme#calcularPrecoSugerido(Material, Tamanho)};</li>
+ *   <li>tratar os botões Novo, Salvar e Excluir;</li>
+ *   <li>manter a tabela sincronizada com o banco de dados.</li>
+ * </ul>
+ * <p>
+ * Peça, tamanho e material usam os enums {@link Peca}, {@link Tamanho} e
+ * {@link Material}; a cor é um texto escolhido em uma lista fixa.
  * </p>
  */
 public class UniformeController {
 
-
-
-    // Formulário
-
-    /** Seleção da peça (Camisa, Calção, Calça, Meião, Jaqueta, Agasalho). */
-    @FXML private ComboBox<String> cbPeca;
-
-    /** Seleção do tamanho (P, M, G, GG, XG). */
-    @FXML private ComboBox<String> cbTamanho;
-
-    /** Seleção da cor (Branco, Preto, Azul, Vermelho, Verde, Amarelo). */
+    // Formulário (peça, tamanho e material usam enums; a cor continua String)
+    @FXML private ComboBox<Peca> cbPeca;
+    @FXML private ComboBox<Tamanho> cbTamanho;
     @FXML private ComboBox<String> cbCor;
-
-    /** Seleção do material (Algodão, Poliéster). */
-    @FXML private ComboBox<String> cbMaterial;
-
-    /** Campo de texto para o preço (aceita vírgula ou ponto como separador decimal). */
+    @FXML private ComboBox<Material> cbMaterial;
     @FXML private TextField txtPreco;
 
     // Botões
-
-    /** Botão que limpa o formulário para um novo cadastro. */
     @FXML private Button btnNovo;
-
-    /** Botão que salva (insere ou atualiza) o uniforme. */
     @FXML private Button btnSalvar;
-
-    /** Botão que exclui o uniforme selecionado (desabilitado sem seleção). */
     @FXML private Button btnExcluir;
 
     // Tabela e colunas
-
-    /** Tabela que lista os uniformes cadastrados. */
     @FXML private TableView<Uniforme> tblUniformes;
-
-    /** Coluna do identificador. */
     @FXML private TableColumn<Uniforme, Integer> colId;
-
-    /** Coluna da peça. */
-    @FXML private TableColumn<Uniforme, String> colPeca;
-
-    /** Coluna do tamanho. */
-    @FXML private TableColumn<Uniforme, String> colTamanho;
-
-    /** Coluna da cor. */
+    @FXML private TableColumn<Uniforme, Peca> colPeca;
+    @FXML private TableColumn<Uniforme, Tamanho> colTamanho;
     @FXML private TableColumn<Uniforme, String> colCor;
-
-    /** Coluna do material. */
-    @FXML private TableColumn<Uniforme, String> colMaterial;
-
-    /** Coluna do preço (exibido como R$ 0,00). */
+    @FXML private TableColumn<Uniforme, Material> colMaterial;
     @FXML private TableColumn<Uniforme, Double> colPreco;
 
-
-
-    /** Localidade (pt-BR) usada na formatação de valores monetários. */
+    /** Localidade usada para formatar valores monetários (vírgula como separador decimal). */
     private static final Locale PT_BR = Locale.forLanguageTag("pt-BR");
 
-    /** DAO utilizado para acessar os dados de uniformes. */
+    /** DAO usado para ler, gravar e excluir uniformes no banco de dados. */
     private final UniformeDAO uniformeDAO = new UniformeDAO();
-
 
     /**
      * Indica que o formulário está sendo preenchido a partir de uma linha da
-     * tabela. Evita que o preço sugerido sobrescreva o preço já cadastrado.
+     * tabela. Evita que o listener de preço sobrescreva o valor vindo do banco.
      */
     private boolean preenchendoFormulario = false;
 
-
     /**
-     * Inicialização da tela, chamada automaticamente pelo JavaFX após o
-     * carregamento do FXML. Configura combos, tabela e listeners e carrega os dados.
+     * Inicializa a tela. Chamado automaticamente pelo JavaFX após o carregamento do FXML.
+     * <p>
+     * Popula os ComboBoxes, configura a tabela e os listeners e carrega os
+     * uniformes do banco.
+     * </p>
      */
     @FXML
     private void initialize() {
@@ -112,26 +90,26 @@ public class UniformeController {
         carregarTabela();
     }
 
-    /** Define as opções disponíveis em cada ComboBox do formulário. */
+    /**
+     * Popula os ComboBoxes. As opções de peça, tamanho e material vêm dos
+     * enums, por meio do método {@code values()}; a cor usa uma lista fixa.
+     */
     private void configurarComboBoxes() {
-        cbPeca.setItems(FXCollections.observableArrayList(
-                "Camisa", "Calção", "Calça", "Meião", "Jaqueta", "Agasalho"));
+        cbPeca.setItems(FXCollections.observableArrayList(Peca.values()));
+        cbTamanho.setItems(FXCollections.observableArrayList(Tamanho.values()));
+        cbMaterial.setItems(FXCollections.observableArrayList(Material.values()));
 
-        cbTamanho.setItems(FXCollections.observableArrayList(
-                "P", "M", "G", "GG", "XG"));
-
+        // A cor não é um enum, então mantém a lista de opções fixa
         cbCor.setItems(FXCollections.observableArrayList(
                 "Branco", "Preto", "Azul", "Vermelho", "Verde", "Amarelo"));
-
-        cbMaterial.setItems(FXCollections.observableArrayList(
-                "Algodão", "Poliéster"));
     }
 
     /**
-     * Vincula as colunas às propriedades de {@link Uniforme} e define a
-     * formatação da coluna de preço (R$ 0,00).
+     * Liga cada coluna a um atributo da classe {@link Uniforme} e formata o
+     * preço como moeda (ex.: {@code R$ 35,00}).
      */
     private void configurarTabela() {
+        // O texto entre aspas é o nome do atributo: "id" -> getId(), "precoBase" -> getPrecoBase()
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colPeca.setCellValueFactory(new PropertyValueFactory<>("peca"));
         colTamanho.setCellValueFactory(new PropertyValueFactory<>("tamanho"));
@@ -139,6 +117,7 @@ public class UniformeController {
         colMaterial.setCellValueFactory(new PropertyValueFactory<>("material"));
         colPreco.setCellValueFactory(new PropertyValueFactory<>("precoBase"));
 
+        // Exibe o preço formatado como moeda (ex.: R$ 35,00)
         colPreco.setCellFactory(coluna -> new TableCell<Uniforme, Double>() {
             @Override
             protected void updateItem(Double valor, boolean vazio) {
@@ -149,55 +128,63 @@ public class UniformeController {
     }
 
     /**
-     * Registra os listeners da tela: recalcula o preço sugerido ao mudar material
-     * ou tamanho, preenche o formulário ao selecionar uma linha da tabela e
-     * desabilita o botão Excluir enquanto não houver seleção.
+     * Registra os listeners da tela:
+     * <ol>
+     *   <li>ao mudar o material ou o tamanho, recalcula o preço sugerido;</li>
+     *   <li>ao selecionar uma linha da tabela, os dados vão para o formulário;</li>
+     *   <li>o botão Excluir só fica habilitado com uma linha selecionada.</li>
+     * </ol>
      */
     private void configurarListeners() {
+        // 1) Quando o material OU o tamanho mudar, recalcula o preço sugerido
         cbMaterial.valueProperty().addListener((obs, antigo, novo) -> atualizarPrecoSugerido());
         cbTamanho.valueProperty().addListener((obs, antigo, novo) -> atualizarPrecoSugerido());
 
+        // 2) Quando o usuário clicar em uma linha da tabela, joga os dados no formulário
         tblUniformes.getSelectionModel().selectedItemProperty().addListener((obs, antigo, selecionado) -> {
             if (selecionado != null) {
                 preencherFormulario(selecionado);
             }
         });
 
+        // 3) O botão Excluir só fica habilitado quando existe uma linha selecionada
         btnExcluir.disableProperty().bind(
                 tblUniformes.getSelectionModel().selectedItemProperty().isNull());
     }
 
-
-    /** Ação do botão Novo: limpa o formulário para um novo cadastro. */
+    /**
+     * Ação do botão Novo.
+     * Limpa o formulário para cadastrar um uniforme do zero.
+     */
     @FXML
     private void acaoNovo() {
         limparFormulario();
     }
 
-
     /**
      * Ação do botão Salvar.
      * <p>
-     * Valida a seleção de peça, tamanho, cor e material, e o preço (numérico,
-     * aceita vírgula e deve ser maior que zero). Se não houver uniforme
-     * selecionado na tabela, insere um novo; caso contrário, atualiza o
-     * selecionado. Ao final, recarrega a tabela, limpa o formulário e exibe
-     * mensagem de sucesso.
+     * Valida os campos (peça, tamanho, cor, material e preço maior que zero; o
+     * preço aceita vírgula ou ponto). Se não houver linha selecionada na tabela,
+     * insere um novo uniforme; caso contrário, atualiza o uniforme selecionado.
+     * Ao final, recarrega a tabela, limpa o formulário e exibe uma mensagem de sucesso.
      * </p>
      */
     @FXML
     private void acaoSalvar() {
-        String peca = cbPeca.getValue();
-        String tamanho = cbTamanho.getValue();
+        Peca peca = cbPeca.getValue();
+        Tamanho tamanho = cbTamanho.getValue();
         String cor = cbCor.getValue();
-        String material = cbMaterial.getValue();
+        Material material = cbMaterial.getValue();
 
+        // Validação dos campos obrigatórios
         if (peca == null || tamanho == null || cor == null || material == null) {
             mostrarAlerta(AlertType.WARNING, "Campos obrigatórios",
                     "Selecione peça, tamanho, cor e material.");
             return;
         }
 
+        // Converte o preço digitado (aceita vírgula ou ponto)
         double preco;
         try {
             preco = Double.parseDouble(txtPreco.getText().trim().replace(",", "."));
@@ -218,8 +205,10 @@ public class UniformeController {
         Uniforme selecionado = tblUniformes.getSelectionModel().getSelectedItem();
 
         if (selecionado == null) {
+            // Cadastro novo (id 0: o banco gera o id real com AUTO_INCREMENT)
             uniformeDAO.inserir(new Uniforme(0, peca, tamanho, cor, material, preco));
         } else {
+            // Edição de um uniforme que já existe
             uniformeDAO.atualizar(new Uniforme(selecionado.getId(), peca, tamanho, cor, material, preco));
         }
 
@@ -231,10 +220,10 @@ public class UniformeController {
     /**
      * Ação do botão Excluir.
      * <p>
-     * Pede confirmação e exclui o uniforme selecionado. Como o DAO não propaga
-     * erros, a tabela é recarregada e verifica-se se o uniforme ainda existe: se
-     * sim, a exclusão foi bloqueada (provavelmente por registros de produção
-     * vinculados) e o usuário é avisado; se não, a exclusão é confirmada.
+     * Pede confirmação e exclui o uniforme selecionado. Como o DAO apenas imprime
+     * os erros no console, o método confere se o uniforme realmente saiu da
+     * tabela; se não saiu (por exemplo, por estar vinculado a registros de
+     * produção), exibe um aviso.
      * </p>
      */
     @FXML
@@ -261,6 +250,9 @@ public class UniformeController {
         uniformeDAO.excluir(id);
         carregarTabela();
 
+        // O DAO apenas imprime o erro no console (ex.: uniforme usado em um registro
+        // de produção, que viola a chave estrangeira). Por isso conferimos se ele
+        // realmente saiu da tabela.
         boolean aindaExiste = tblUniformes.getItems().stream().anyMatch(u -> u.getId() == id);
 
         if (aindaExiste) {
@@ -272,26 +264,31 @@ public class UniformeController {
         }
     }
 
-
-    /** Busca todos os uniformes no banco e atualiza a tabela. */
+    /**
+     * Busca os uniformes no banco e atualiza a tabela.
+     */
     private void carregarTabela() {
         List<Uniforme> lista = uniformeDAO.listar();
         tblUniformes.setItems(FXCollections.observableArrayList(lista));
     }
 
     /**
-     * Preenche o campo de preço com o valor sugerido para o material e tamanho
-     * selecionados. Não faz nada se algum dos dois não estiver selecionado ou se
-     * o formulário estiver sendo preenchido a partir da tabela.
+     * Calcula o preço sugerido pela regra de negócio da classe {@link Uniforme}
+     * e o exibe no campo de preço.
+     * <p>
+     * Não faz nada enquanto o formulário está sendo preenchido a partir da tabela
+     * ou quando material e tamanho ainda não foram ambos escolhidos.
+     * </p>
      */
     private void atualizarPrecoSugerido() {
         if (preenchendoFormulario) {
-            return; 
+            return; // está carregando uma linha da tabela: mantém o preço que veio do banco
         }
 
-        String material = cbMaterial.getValue();
-        String tamanho = cbTamanho.getValue();
+        Material material = cbMaterial.getValue();
+        Tamanho tamanho = cbTamanho.getValue();
 
+        // Só sugere quando os dois já foram escolhidos
         if (material == null || tamanho == null) {
             return;
         }
@@ -301,13 +298,10 @@ public class UniformeController {
     }
 
     /**
-     * Preenche os campos do formulário com os dados de um uniforme.
-     * <p>
-     * Ativa temporariamente {@link #preenchendoFormulario} para que o preço
-     * cadastrado não seja substituído pelo preço sugerido.
-     * </p>
+     * Copia os dados de um uniforme para os campos do formulário, mantendo o
+     * preço original (sem recalcular a sugestão).
      *
-     * @param u uniforme cujos dados serão exibidos
+     * @param u uniforme selecionado na tabela
      */
     private void preencherFormulario(Uniforme u) {
         preenchendoFormulario = true;
@@ -322,7 +316,9 @@ public class UniformeController {
         }
     }
 
-    /** Limpa a seleção da tabela e os campos do formulário, devolvendo o foco ao combo de peça. */
+    /**
+     * Limpa o formulário e a seleção da tabela, voltando ao modo "cadastro novo".
+     */
     private void limparFormulario() {
         tblUniformes.getSelectionModel().clearSelection();
         cbPeca.setValue(null);
@@ -334,9 +330,9 @@ public class UniformeController {
     }
 
     /**
-     * Exibe um alerta e aguarda o usuário fechá-lo.
+     * Exibe uma caixa de diálogo e aguarda o usuário fechá-la.
      *
-     * @param tipo     tipo do alerta (informação, aviso, erro, etc.)
+     * @param tipo     tipo do alerta (informação, aviso, erro...)
      * @param titulo   título da janela
      * @param mensagem texto exibido ao usuário
      */
