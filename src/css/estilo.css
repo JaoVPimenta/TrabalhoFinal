@@ -1,0 +1,356 @@
+/* ==========================================================
+   SGU - Sistema de Gestão de Uniformes
+   Folha de estilo única, usada por todas as telas.
+
+   Paleta de cores
+     Azul-marinho (menu e títulos) .... #14284b
+     Azul-petróleo (cor principal) .... #0e7c8c
+     Fundo da janela .................. #eef2f6
+     Texto principal .................. #1b2a41
+     Texto secundário ................. #6b7a90
+     Bordas ........................... #d5dde8
+     Perigo (excluir) ................. #d64545
+   ========================================================== */
+
+
+/* ---------- Geral ---------- */
+
+/* ".root" é o elemento mais externo da janela.
+   Aqui definimos a fonte e a cor de destaque (seleções, foco, calendário). */
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-accent: #0e7c8c;
+    -fx-focus-color: #0e7c8c;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Fundo cinza-claro das telas */
+.tela {
+    -fx-background-color: #eef2f6;
+    -fx-padding: 20;
+}
+
+/* Caixa branca com cantos arredondados e sombra suave */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(20, 40, 75, 0.10), 14, 0, 0, 3);
+}
+
+/* Ajuste extra para o cartão da tela de boas-vindas */
+.boas-vindas {
+    -fx-padding: 24 40;
+}
+
+
+/* ---------- Textos ---------- */
+
+.titulo-card {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14284b;
+}
+
+/* Rótulos dos campos do formulário (Nome, CPF, Cargo...) */
+.rotulo {
+    -fx-font-weight: bold;
+    -fx-text-fill: #4b5b73;
+}
+
+.titulo-boas-vindas {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14284b;
+}
+
+.subtitulo {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6b7a90;
+}
+
+
+/* ---------- Campos de texto, ComboBox e DatePicker ---------- */
+
+.text-field,
+.combo-box-base {
+    -fx-background-color: #f8fafc;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: #d5dde8;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-text-fill: #1b2a41;
+    -fx-prompt-text-fill: #9aa7b8;
+    -fx-pref-height: 34px;
+}
+
+.text-field {
+    -fx-padding: 0 10;
+}
+
+/* Campo selecionado: fundo branco e borda na cor principal */
+.text-field:focused,
+.combo-box-base:focused {
+    -fx-background-color: white;
+    -fx-border-color: #0e7c8c;
+}
+
+/* O DatePicker tem um campo de texto dentro dele; este não precisa de borda própria.
+   (Fica depois da regra ":focused" de propósito.) */
+.combo-box-base > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 10;
+}
+
+/* Botão da setinha */
+.combo-box-base > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 10;
+}
+
+.combo-box-base > .arrow-button > .arrow {
+    -fx-background-color: #6b7a90;
+}
+
+/* Texto exibido dentro do ComboBox fechado */
+.combo-box > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1b2a41;
+    -fx-padding: 0 10;
+}
+
+/* Lista que se abre ao clicar no ComboBox */
+.combo-box-popup > .list-view {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: #d5dde8;
+    -fx-border-radius: 8;
+    -fx-padding: 4;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #1b2a41;
+    -fx-padding: 8 10;
+    -fx-background-radius: 6;
+}
+
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #e3f1f3;
+}
+
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #cfeaee;
+    -fx-text-fill: #14284b;
+}
+
+
+/* ---------- Botões ---------- */
+
+.button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+/* Ação principal (Salvar) */
+.botao-primario {
+    -fx-background-color: #0e7c8c;
+    -fx-text-fill: white;
+}
+
+.botao-primario:hover {
+    -fx-background-color: #0b6573;
+}
+
+.botao-primario:pressed {
+    -fx-background-color: #094f5a;
+}
+
+/* Ações neutras (Consultar, Limpar, Novo) */
+.botao-secundario {
+    -fx-background-color: #e3e9f0;
+    -fx-text-fill: #33445c;
+}
+
+.botao-secundario:hover {
+    -fx-background-color: #d3dce7;
+}
+
+.botao-secundario:pressed {
+    -fx-background-color: #c2cedc;
+}
+
+/* Ação destrutiva (Excluir) */
+.botao-perigo {
+    -fx-background-color: #d64545;
+    -fx-text-fill: white;
+}
+
+.botao-perigo:hover {
+    -fx-background-color: #bd3535;
+}
+
+.botao-perigo:pressed {
+    -fx-background-color: #a32b2b;
+}
+
+
+/* ---------- Tabelas ---------- */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/* Faixa do cabeçalho */
+.table-view .column-header-background {
+    -fx-background-color: #eef2f6;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 38px;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #4b5b73;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER-LEFT;
+}
+
+/* Linhas: altura maior, linha fina de separação e listras alternadas */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-cell-size: 38px;
+    -fx-border-color: transparent transparent #eef2f6 transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+/* Linhas vazias (abaixo dos dados) ficam brancas e sem linha */
+.table-row-cell:empty {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: #e3f1f3;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #cfeaee;
+}
+
+.table-cell {
+    -fx-text-fill: #1b2a41;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 8;
+    -fx-border-color: transparent;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: #9aa7b8;
+}
+
+
+/* ---------- Barra de rolagem ---------- */
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #c5d0de;
+    -fx-background-radius: 6;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #a9b8cb;
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+
+/* ---------- Menu superior ---------- */
+
+.menu-bar {
+    -fx-background-color: #14284b;
+    -fx-padding: 2 6;
+}
+
+.menu-bar > .container > .menu-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+}
+
+.menu-bar > .container > .menu-button > .label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+}
+
+.menu-bar > .container > .menu-button:hover,
+.menu-bar > .container > .menu-button:showing {
+    -fx-background-color: #24407a;
+}
+
+/* Menus que se abrem ao clicar */
+.context-menu {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: #d5dde8;
+    -fx-border-radius: 8;
+    -fx-padding: 6 4;
+}
+
+.menu-item {
+    -fx-background-radius: 6;
+}
+
+.menu-item > .label {
+    -fx-text-fill: #1b2a41;
+    -fx-padding: 4 10;
+}
+
+.menu-item:focused {
+    -fx-background-color: #0e7c8c;
+}
+
+.menu-item:focused > .label {
+    -fx-text-fill: white;
+}

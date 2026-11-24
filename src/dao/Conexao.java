@@ -22,7 +22,7 @@ public class Conexao {
 	private static final String USUARIO = "root";
 
 	/** Senha utilizada para autenticação no banco de dados. */
-	private static final String SENHA = "40028922";
+	private static final String SENHA = "3009";
 	
 	//Método para obter a conexão
 
